@@ -29,6 +29,7 @@ ATLOUStealthCharacter::ATLOUStealthCharacter()
 	// Configure character movement
 	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...	
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f); // ...at this rotation rate
+	GetCharacterMovement()->NavAgentProps.bCanCrouch = true;
 
 	// Note: For faster iteration times these variables, and many more, can be tweaked in the Character Blueprint
 	// instead of recompiling to adjust them
@@ -85,6 +86,9 @@ void ATLOUStealthCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ATLOUStealthCharacter::Look);
+
+		//Crouching
+		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Started,this, &ATLOUStealthCharacter::ToggleCrouch);
 	}
 	else
 	{
@@ -125,5 +129,17 @@ void ATLOUStealthCharacter::Look(const FInputActionValue& Value)
 		// add yaw and pitch input to controller
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
+	}
+}
+
+void ATLOUStealthCharacter::ToggleCrouch(const FInputActionValue& Value)
+{
+	if (bIsCrouched)
+	{
+		UnCrouch();
+	}
+	else
+	{
+		Crouch();
 	}
 }
