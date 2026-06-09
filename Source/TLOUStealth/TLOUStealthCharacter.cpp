@@ -1,6 +1,7 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+
 
 #include "TLOUStealthCharacter.h"
+#include "DrawDebugHelpers.h"
 #include "Engine/LocalPlayer.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -18,6 +19,9 @@ DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
 ATLOUStealthCharacter::ATLOUStealthCharacter()
 {
+	//Allow the character to use tick for debug sphere
+	PrimaryActorTick.bCanEverTick = true;
+	
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 		
@@ -54,6 +58,25 @@ ATLOUStealthCharacter::ATLOUStealthCharacter()
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
+
+
+void ATLOUStealthCharacter::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	if (!bShowNoiseDebug) return;
+
+	float CurrentSpeed = GetCharacterMovement()->GetLastUpdateVelocity().Length();
+
+	if (CurrentSpeed >= 10.f)
+	{
+		float CurrentNoiseRadius = bIsCrouched ? CrouchNoiseRadius : WalkNoiseRadius;
+		FColor CurrentColor = bIsCrouched ? FColor::Green : FColor::Red;
+		DrawDebugSphere(GetWorld(), GetActorLocation(), CurrentNoiseRadius, 24, CurrentColor, false, -1, 0, 2.0f);
+	}
+	
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 // Input

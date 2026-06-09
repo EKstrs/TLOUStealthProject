@@ -57,6 +57,8 @@ public:
 
 protected:
 
+	virtual void Tick(float DeltaSeconds) override;
+
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
 
@@ -66,12 +68,22 @@ protected:
 	/** Called for crouching input */
 	void ToggleCrouch(const FInputActionValue& Value );
 	
-	
 	virtual void NotifyControllerChanged() override;
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 
 private:
+
+	/** Stealth variables */
+	
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Stealth Variables", meta = (AllowPrivateAccess = "true"))
+	float WalkNoiseRadius = 500.f;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Stealth Variables", meta = (AllowPrivateAccess = "true"))
+	float CrouchNoiseRadius = 200.f;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Stealth Variables", meta = (AllowPrivateAccess = "true"))
+	bool bShowNoiseDebug = true;
 };
 
