@@ -12,9 +12,16 @@ EBTNodeResult::Type UBTTask_GetNextWaypoint::ExecuteTask(UBehaviorTreeComponent&
 {
 	AAIController* AIController = owner_comp.GetAIOwner();
 
+	if(!AIController) return EBTNodeResult::Failed;
+	
 	if (AAICharacter* AICharacter = Cast<AAICharacter>(AIController->GetPawn()))
 	{
 		int CurrentIndex = AICharacter->WayPointIndex;
+		if (AICharacter->WayPoints.IsEmpty() || !AICharacter->WayPoints.IsValidIndex(CurrentIndex))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Waypoints is empty or Current index is not valid"));
+			return EBTNodeResult::Failed;
+		}
 		APatrolWaypoints* CurrentWaypoint = AICharacter->WayPoints[CurrentIndex];
 
 		if (!CurrentWaypoint) return  EBTNodeResult::Failed;
@@ -34,9 +41,5 @@ EBTNodeResult::Type UBTTask_GetNextWaypoint::ExecuteTask(UBehaviorTreeComponent&
 		}
 		return EBTNodeResult::Succeeded;
 	}
-	
-	else
-	{
-		return EBTNodeResult::Failed;
-	}
+	return EBTNodeResult::Failed;
 }
