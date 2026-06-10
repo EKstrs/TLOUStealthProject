@@ -21,6 +21,6 @@ protected:
 private:
 
 	UPROPERTY(EditdefaultsOnly, Category = "StealthAI")
-	UBehaviorTree* BehaviorTree;
+	TObjectPtr<UBehaviorTree> BehaviorTree;
 	
 };

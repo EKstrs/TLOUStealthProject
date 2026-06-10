@@ -3,6 +3,7 @@
 
 #include "AI/AICharacter.h"
 #include "AI/StealthAIController.h"
+#include "Components/WidgetComponent.h"
 
 AAICharacter::AAICharacter()
 {
@@ -11,6 +12,11 @@ AAICharacter::AAICharacter()
 	AIControllerClass = AStealthAIController::StaticClass();
 	//Make sure the AI is possessed whether placed or spawned
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+
+	PatrolStatusWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("PatrolStatusWidget"));
+	PatrolStatusWidget->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepWorldTransform);
+	PatrolStatusWidget->SetWidgetSpace(EWidgetSpace::World);
+	PatrolStatusWidget->SetVisibility(true);
 }
 
 void AAICharacter::BeginPlay()
@@ -22,5 +28,6 @@ void AAICharacter::BeginPlay()
 void AAICharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	
 
 }

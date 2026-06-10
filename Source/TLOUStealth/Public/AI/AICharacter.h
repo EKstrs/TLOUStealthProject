@@ -8,6 +8,8 @@
 
 
 class APatrolWaypoints;
+class UWidgetComponent;
+
 
 UCLASS()
 class AAICharacter : public ACharacter
@@ -29,9 +31,8 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-
-
-
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<UWidgetComponent> PatrolStatusWidget;
+	
 
 };
