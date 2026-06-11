@@ -13,8 +13,9 @@ AAICharacter::AAICharacter()
 	//Make sure the AI is possessed whether placed or spawned
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
+    //Debug widget for AI status
 	PatrolStatusWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("PatrolStatusWidget"));
-	PatrolStatusWidget->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepWorldTransform);
+	PatrolStatusWidget->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 	PatrolStatusWidget->SetWidgetSpace(EWidgetSpace::World);
 	PatrolStatusWidget->SetVisibility(true);
 }

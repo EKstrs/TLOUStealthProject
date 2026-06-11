@@ -30,6 +30,7 @@ EBTNodeResult::Type UBTTask_GetNextWaypoint::ExecuteTask(UBehaviorTreeComponent&
 		float TimeToWait = CurrentWaypoint->WaitTime;
 
 		UBlackboardComponent* AIBlackboard = owner_comp.GetBlackboardComponent();
+		if(!AIBlackboard) return EBTNodeResult::Failed;
 		AIBlackboard->SetValueAsVector(TargetLocation.SelectedKeyName, Location);
 		AIBlackboard->SetValueAsFloat(WaitTime.SelectedKeyName, TimeToWait);
 
