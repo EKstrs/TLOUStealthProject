@@ -7,6 +7,7 @@
 #include "Perception/AISenseConfig_Hearing.h"
 #include "Perception/AISenseConfig_Sight.h"
 #include "Perception/AIPerceptionTypes.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 
 AStealthAIController::AStealthAIController()
@@ -44,5 +45,16 @@ void AStealthAIController::OnTargetDetected(AActor* Actor, FAIStimulus const Sti
 {
 	if (Stimulus.WasSuccessfullySensed())
 	{
+		if (GetBlackboardComponent())
+		{
+			GetBlackboardComponent()->SetValueAsBool(TEXT("IsAlerted"), true);
+		}
+	}
+	else
+	{
+		if (GetBlackboardComponent())
+		{
+			GetBlackboardComponent()->SetValueAsBool(TEXT("IsAlerted"), false);
+		}
 	}
 }
