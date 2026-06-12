@@ -35,12 +35,16 @@ protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI Perception")
     TObjectPtr<UAISenseConfig_Hearing> HearingConfig;
 
+    /*Detection meter*/
+    FTimerHandle DetectionTimerHandle;
+    float CurrentDetectionLevel = 0.0f;
+    bool bIsSeeingPlayer = false;
+    void UpdateDetectionMeter();
 
 private:
 
 	UPROPERTY(EditdefaultsOnly, Category = "StealthAI")
 	TObjectPtr<UBehaviorTree> BehaviorTree;
-	
 
-	
+   	
 };
