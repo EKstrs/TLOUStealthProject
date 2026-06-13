@@ -17,14 +17,14 @@ AStealthAIController::AStealthAIController()
 	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));
 	HearingConfig = CreateDefaultSubobject<UAISenseConfig_Hearing>(TEXT("HearingConfig"));
 
-	SightConfig->SightRadius = 1500.f;
-	SightConfig->LoseSightRadius = 2000.f;
+	SightConfig->SightRadius = 2000.f;
+	SightConfig->LoseSightRadius = 2500.f;
 	SightConfig->PeripheralVisionAngleDegrees = 80.f;
 	SightConfig->DetectionByAffiliation.bDetectEnemies = true;
 	SightConfig->DetectionByAffiliation.bDetectFriendlies = true;
 	SightConfig->DetectionByAffiliation.bDetectNeutrals = true;
 
-	HearingConfig->HearingRange = 2000.f;
+	HearingConfig->HearingRange = 3000.f;
 
 	AIPerceptionComponent->ConfigureSense(*SightConfig);
 	AIPerceptionComponent->ConfigureSense(*HearingConfig);
@@ -45,27 +45,37 @@ void AStealthAIController::OnPossess(APawn* PossessedPawn)
 void AStealthAIController::OnTargetDetected(AActor* Actor, FAIStimulus const Stimulus)
 {
 	if (!Actor || !Actor->ActorHasTag(TEXT("Player"))) return;
-	
+
 	if (Stimulus.Type == UAISense::GetSenseID<UAISense_Sight>())
 	{
 		bIsSeeingPlayer = Stimulus.WasSuccessfullySensed();
-
+		if (bIsSeeingPlayer) CurrentTarget = Actor;
+		else CurrentTarget = nullptr;
 		if (!GetWorldTimerManager().IsTimerActive(DetectionTimerHandle))
 		{
-			GetWorldTimerManager().SetTimer(DetectionTimerHandle, this, &AStealthAIController::UpdateDetectionMeter, 0.1f, true);
+			GetWorldTimerManager().SetTimer(DetectionTimerHandle, this, &AStealthAIController::UpdateDetectionMeter,
+			                                0.1f, true);
 		}
 	}
 	else if (Stimulus.Type == UAISense::GetSenseID<UAISense_Hearing>())
 	{
-		
 	}
 }
 
 void AStealthAIController::UpdateDetectionMeter()
 {
-	if (bIsSeeingPlayer)
+	if (bIsSeeingPlayer && CurrentTarget != nullptr)
 	{
-		CurrentDetectionLevel = FMath::Clamp<float>(CurrentDetectionLevel + 0.05f, 0.0f, 1.0f);
+		float Distance = GetPawn()->GetDistanceTo(CurrentTarget);
+		FVector2D DistanceRange(500.f, 2000.f);
+		FVector2D FillRateRange(UpperRange, LowerRange);
+		float DynamicFillRate = FMath::GetMappedRangeValueClamped(DistanceRange, FillRateRange, Distance);
+		CurrentDetectionLevel = FMath::Clamp<float>(CurrentDetectionLevel + DynamicFillRate, 0.0f, 1.0f);
+
+		if (UBlackboardComponent* BBComp = GetBlackboardComponent())
+		{
+			BBComp->SetValueAsVector(TEXT("LastKnownLocation"), CurrentTarget->GetActorLocation());
+		}
 	}
 	else
 	{
@@ -75,7 +85,7 @@ void AStealthAIController::UpdateDetectionMeter()
 	{
 		BBComp->SetValueAsFloat(TEXT("DetectionLevel"), CurrentDetectionLevel);
 	}
-	
+
 	if (!bIsSeeingPlayer && CurrentDetectionLevel <= 0.0f)
 	{
 		GetWorldTimerManager().ClearTimer(DetectionTimerHandle);

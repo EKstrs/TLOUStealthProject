@@ -40,6 +40,11 @@ protected:
     float CurrentDetectionLevel = 0.0f;
     bool bIsSeeingPlayer = false;
     void UpdateDetectionMeter();
+    TObjectPtr<AActor> CurrentTarget;
+    UPROPERTY(EditAnywhere, Category = "AI Perception")
+    float UpperRange = 0.15f;
+	UPROPERTY(EditAnywhere, Category = "AI Perception")
+    float LowerRange = 0.02f;
 
 private:
 
